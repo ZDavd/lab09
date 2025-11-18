@@ -1,6 +1,5 @@
 package it.unibo.mvc;
 
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -15,6 +14,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Random;
 
@@ -42,10 +42,17 @@ public class BadIOGUI {
     public BadIOGUI() {
         final JPanel canvas = new JPanel();
         canvas.setLayout(new BorderLayout());
-        final JButton write = new JButton("Write on file");
-        canvas.add(write, BorderLayout.CENTER);
         frame.setContentPane(canvas);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        final JButton write = new JButton("Write on file");
+        final JButton read = new JButton("Read");
+        final JPanel customPanel = new JPanel();
+        customPanel.setLayout(new BorderLayout());
+        customPanel.add(write, BorderLayout.CENTER);
+        customPanel.add(read, BorderLayout.SOUTH);
+
+        canvas.add(customPanel, BorderLayout.CENTER);
         /*
          * Handlers
          */
@@ -64,6 +71,21 @@ public class BadIOGUI {
                 } catch (final IOException e) {
                     JOptionPane.showMessageDialog(frame, e, "Error", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace(); // NOPMD: allowed as this is just an exercise
+                }
+            }
+        });
+
+        read.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent event) {
+                try {
+                    final List<String> results = Files.readAllLines(Path.of(PATH));
+                    for (final String result: results) {
+                        System.out.println(result); // NOPMD: just an exercise
+                    }
+                } catch (final IOException ex) {
+                    JOptionPane.showMessageDialog(frame, ex, "Error", JOptionPane.ERROR_MESSAGE);
+                    ex.printStackTrace(); // NOPMD: just an exercise
                 }
             }
         });
@@ -88,6 +110,7 @@ public class BadIOGUI {
          * on screen. Results may vary, but it is generally the best choice.
          */
         frame.setLocationByPlatform(true);
+        frame.pack();
         /*
          * OK, ready to push the frame onscreen
          */
